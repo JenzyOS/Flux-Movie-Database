@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags and title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUX</title>
+    <link rel="stylesheet" href="../frontend/styles_profile.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div>
+            <a href="/dashboard" class="flux-btn">FLUX</a>
+        </div>
+        <div>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </div>
+
+    <!-- Profile container -->
+    <div class="profile-container">
+        <h2>Your Profile Information</h2>
+        <div class="profile-info">
+            <img src="{{ user_profile_image }}" alt="Profile Image" id="profile-image">
+            <div>
+                <p><strong>Username:</strong> {{ user_username }}</p>
+                <p><strong>Email:</strong> {{ user_email }}</p>
+            </div>
+        </div>
+
+        <!-- Update profile picture button -->
+        <button class="update-btn" id="update-profile-btn">Update Profile Picture</button>
+
+        <!-- Image upload container -->
+        <div id="image-upload-container" style="display: none;">
+            <form id="image-upload-form" action="/update_profile_image" method="POST" enctype="multipart/form-data">
+                <input type="file" name="profile-image" accept="image/*" id="profile-image-input" style="display: none;">
+                <button type="submit" class="btn-success" id="upload-button">Upload</button>
+            </form>
+        </div>
+        
+        <!-- Change username form -->
+        <div class="username-change-container">
+            <form action="/change_username" method="POST">
+                <label for="new-username">New Username:</label>
+                <input type="text" id="new-username" name="new-username" required>
+                <button type="submit" class="btn-success">Update Username</button>
+            </form>
+        </div>
+
+        <!-- Change password form -->
+        <div class="password-change-container">
+            <form action="/change_password" method="POST">
+                <label for="current-password">Current Password:</label>
+                <input type="password" id="current-password" name="current-password" required>
+                <label for="new-password">New Password:</label>
+                <input type="password" id="new-password" name="new-password" required>
+                <button type="submit" class="btn-success">Update Password</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript for handling profile picture update -->
+    <script>
+        const updateProfileBtn = document.getElementById("update-profile-btn");
+        const profileImageInput = document.getElementById("profile-image-input");
+        const uploadButton = document.getElementById("upload-button");
+
+        updateProfileBtn.addEventListener("click", function() {
+            profileImageInput.click();
+        });
+
+        profileImageInput.addEventListener("change", function() {
+            if (profileImageInput.files.length > 0) {
+                uploadButton.click();
+            }
+        });
+    </script>
+</body>
+</html>

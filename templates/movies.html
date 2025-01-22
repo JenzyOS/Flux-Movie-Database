@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags and title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUX</title>
+    <!-- CSS Link -->
+    <link rel="stylesheet" href="../frontend/styles_movie.css">
+    <style>
+        .star {
+            font-size: 24px;
+            cursor: pointer;
+            color: #ccc;
+        }
+        .star.selected {
+            color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="/dashboard" class="flux-btn">FLUX</a>
+        <div class="profile-container">
+            <button class="profile-btn">Profile</button>
+            <div class="dropdown-menu">
+                <!-- Profile dropdown menu -->
+                <a href="/profile" class="dropdown-item">Edit Profile</a>
+                <a href="/favorites" class="dropdown-item">Favorites</a>
+                <a href="/watched" class="dropdown-item">Watched</a>
+                <a href="/watchlist" class="dropdown-item">Watchlist</a>
+                <a href="/rating" class="dropdown-item">My Ratings</a>
+            </div>
+        </div>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+    
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <h2 style="text-align: center;">Search Results</h2>
+        
+        <!-- Search Form -->
+        <div class="button-container">
+            <form method="POST" action="/movies" class="mb-4">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        name="movie_name" 
+                        class="form-control" 
+                        placeholder="Enter movie name..." 
+                        required>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Error Message -->
+        {% if error_message %}
+            <div class="alert alert-danger text-center" role="alert">
+                {{ error_message }}
+            </div>
+        {% endif %}
+        
+        <!-- Similar Movies -->
+        {% if movie_data %}
+            <div class="row movie-container">
+                {% for movie in movie_data %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <img 
+                                src="{{ movie.Poster or 'https://via.placeholder.com/300x450?text=No+Image' }}" 
+                                class="card-img-top" 
+                                alt="Movie Poster">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ movie.Title }}</h5>
+                                <p class="card-text">
+                                    <strong>Year:</strong> {{ movie.Year or 'Unknown' }}<br>
+                                    <strong>Genre:</strong> {{ movie.Genre or 'Unknown' }}<br>
+                                    <strong>Director:</strong> {{ movie.Director or 'Unknown' }}<br>
+                                    <strong>Actors:</strong> {{ movie.Actors or 'Unknown' }}<br>
+                                    <strong>IMDb Rating:</strong> {{ movie.imdbRating or 'Unknown' }}<br>
+                                    <strong>Plot:</strong> {{ movie.Plot or 'Unknown' }}
+                                </p>
+                                <!-- Add to Favorites -->
+                                <button class="btn btn-success add-to-favorites" data-movie='{{ movie | tojson }}'>Add to Favorites</button>
+                                <button class="btn btn-success add-to-watched" data-movie='{{ movie | tojson }}'>Add to Watched</button>
+                                <button class="btn btn-success add-to-watchlist" data-movie='{{ movie | tojson }}'>Add to Watchlist</button>
+                                <!-- Rating System -->
+                                <div class="rating" data-movie='{{ movie | tojson }}'>
+                                    <span class="star" data-value="1">&#9733;</span>
+                                    <span class="star" data-value="2">&#9733;</span>
+                                    <span class="star" data-value="3">&#9733;</span>
+                                    <span class="star" data-value="4">&#9733;</span>
+                                    <span class="star" data-value="5">&#9733;</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- JavaScript for handling movie actions and ratings -->
+    <script>
+        // Add to favorites
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.add-to-favorites');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const movieData = button.getAttribute('data-movie');
+                    
+                    fetch('/add_to_favorites', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ movie_data: movieData })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        if (data.success) {
+                            window.location.href = '/favorites';
+                        }
+                    })
+                    .catch(error => {
+                        alert('An error occurred while adding to favorites.');
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+
+        // Add to watched
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.add-to-watched');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const movieData = button.getAttribute('data-movie');
+                    
+                    fetch('/add_to_watched', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ movie_data: movieData })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        if (data.success) {
+                            window.location.href = '/watched';
+                        }
+                    })
+                    .catch(error => {
+                        alert('An error occurred while adding to watched.');
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+
+        // Add to watchlist
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.add-to-watchlist');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const movieData = button.getAttribute('data-movie');
+                    
+                    fetch('/add_to_watchlist', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ movie_data: movieData })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        if (data.success) {
+                            window.location.href = '/watchlist';
+                        }
+                    })
+                    .catch(error => {
+                        alert('An error occurred while adding to watchlist.');
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+
+        // Rate movie
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const movieData = this.closest('.rating').getAttribute('data-movie');
+                    const ratingValue = this.getAttribute('data-value');
+                    
+                    // Update star colors
+                    const allStars = this.closest('.rating').querySelectorAll('.star');
+                    allStars.forEach(s => {
+                        if (s.getAttribute('data-value') <= ratingValue) {
+                            s.classList.add('selected');
+                        } else {
+                            s.classList.remove('selected');
+                        }
+                    });
+
+                    fetch('/rate_movie', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ movie_data: movieData, rating: ratingValue })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/rating';
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        alert('An error occurred while rating the movie.');
+                        console.error('Error:', error);
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

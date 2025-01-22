@@ -1,0 +1,188 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #121212;
+    color: #FFFFFF;
+}
+
+/* Navbar styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2C3E50;
+    padding: 20px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.navbar a {
+    color: #3498DB;
+    text-decoration: none;
+    font-size: 16px;
+    margin-left: 15px;
+}
+
+.navbar .flux-btn {
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+.navbar .logout-btn {
+    font-size: 16px;
+    color: #FFFFFF;
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+}
+
+/* Profile container styles */
+.profile-container {
+    width: 50%;
+    margin: 50px auto;
+    background-color: #1C1C1C;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #FFFFFF;
+}
+
+.profile-container h2 {
+    text-align: center;
+    color: #3498DB;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-info img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.profile-info div {
+    font-size: 16px;
+}
+
+.profile-info p {
+    margin: 5px 0;
+}
+
+/* Update profile picture button styles */
+.update-btn {
+    padding: 10px 20px;
+    background-color: #2980B9;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: block;
+}
+
+.update-btn:hover {
+    background-color: #3498DB;
+}
+
+.profile-container h3 {
+    text-align: center;
+    color: #3498DB;
+}
+
+/* Change password container styles */
+.password-change-container {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #1C1C1C;
+}
+
+.password-change-container label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.password-change-container input[type="password"] {
+    width: 97%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.password-change-container button {
+    padding: 10px 20px;
+    background-color: #2980B9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.password-change-container button:hover {
+    background-color: #3498DB;
+}
+
+/* Change username container styles */
+.username-change-container {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: #1C1C1C;
+}
+
+.username-change-container label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.username-change-container input[type="text"] {
+    width: 97%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.username-change-container button {
+    padding: 10px 20px;
+    background-color: #2980B9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.username-change-container button:hover {
+    background-color: #3498DB;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .profile-container {
+        width: 80%;
+    }
+    .profile-info {
+        flex-direction: column;
+        align-items: center;
+    }
+    .profile-info img {
+        margin-bottom: 15px;
+    }
+    .profile-info div {
+        text-align: center;
+    }
+}

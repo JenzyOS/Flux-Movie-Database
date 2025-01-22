@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags and title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUX</title>
+    <link rel="stylesheet" href="../frontend/styles_ratings.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="/dashboard" class="flux-btn">FLUX</a>
+        <div class="profile-container">
+            <button class="profile-btn">Profile</button>
+            <div class="dropdown-menu">
+                <!-- Profile dropdown menu -->
+                <a href="/profile" class="dropdown-item">Edit Profile</a>
+                <a href="/favorites" class="dropdown-item">Favorites</a>
+                <a href="/watched" class="dropdown-item">Watched</a>
+                <a href="/watchlist" class="dropdown-item">Watchlist</a>
+                <a href="/rating" class="dropdown-item">My Ratings</a>
+            </div>
+        </div>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+    
+    <!-- Favorite Movies Container -->
+    <div class="dashboard-container">
+        <h2 style="text-align: center;">Your Ratings</h2>
+        <div class="movie-container">
+            {% for movie in watchlist_movies %}
+                <div class="movie-card-container">
+                    <div class="movie-card" data-title="{{ movie.title }}">
+                        <!-- Movie card with poster, title, and year -->
+                        <img src="{{ movie.poster or 'https://via.placeholder.com/300x450?text=No+Image' }}" alt="Movie Poster">
+                        <h3>{{ movie.title }}</h3>
+                        <p>{{ movie.year or 'Unknown' }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Rating Container -->
+    <div class="rating-container">
+        
+        {% if rating_movies %}
+            <div class="row movie-container">
+                {% for movie in rating_movies %}
+                    <div class="col-md-4 mb-4">
+                        <div class="movie-card-container">
+                            <div class="card movie-card">
+                                <img 
+                                    src="{{ movie.poster or 'https://via.placeholder.com/300x450?text=No+Image' }}" 
+                                    class="card-img-top" 
+                                    alt="Movie Poster">
+                                <div class="card-body">
+                                    <h5 class="card-title" style="text-align: center; font-size: 18px;">{{ movie.title }}</h5>
+                                    <div class="rating" style="text-align: center;">
+                                        <strong>Your Rating:</strong> {{ movie.imdb_rating or 'Unknown' }}<br>
+                                        <button class="remove-rating" data-title="{{ movie.title }}">Remove Rating</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align: center;">You haven't rated any movies yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Movie popup for detailed view -->
+    <div id="movie-popup" class="movie-popup" style="display: none;">
+        <div class="popup-content">
+            <span id="close-popup" class="close-popup">&times;</span>
+            <img id="popup-poster" src="" alt="Movie Poster">
+            <h3 id="popup-title"></h3>
+            <p id="popup-plot"><strong>Plot:</strong> </p>
+            <p id="popup-year"><strong>Year:</strong> </p>
+            <p id="popup-genre"><strong>Genre:</strong> </p>
+            <p id="popup-director"><strong>Director:</strong> </p>
+            <p id="popup-actors"><strong>Actors:</strong> </p>
+            <p id="popup-imdb"><strong>IMDb Rating:</strong> </p>
+            <button id="remove-from-watchlist" class="btn btn-primary">Remove from Watchlist</button>
+        </div>
+    </div>
+
+    <script>
+        // Add event listeners to remove rating buttons
+        const removeRatingButtons = document.querySelectorAll('.remove-rating');
+        removeRatingButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const title = button.getAttribute('data-title');
+                fetch('/remove_from_rating', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: title })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        const cardContainer = button.closest('.movie-card-container');
+                        cardContainer.classList.remove('movie-card-container');
+                        cardContainer.classList.add('no-animation');
+                        button.closest('.col-md-4').remove();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('An error occurred while removing the rating.');
+                    console.error('Error:', error);
+                });
+            });
+        });
+
+        // Add event listener to remove from watchlist button
+        removeFromWatchlist.addEventListener('click', () => {
+            fetch('/remove_from_watchlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: currentTitle })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`.movie-card[data-title="${currentTitle}"]`).remove();
+                    moviePopup.style.display = 'none';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                alert('An error occurred while removing from the watchlist.');
+                console.error('Error:', error);
+            });
+        });
+    </script>
+
+</body>
+</html>

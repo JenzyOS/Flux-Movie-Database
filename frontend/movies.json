@@ -1,0 +1,18 @@
+{
+    "Search": [
+      {
+        "Title": "Movie Title",
+        "Year": "2020",
+        "imdbID": "tt1234567",
+        "Type": "movie",
+        "Poster": "https://linktoimage.com",
+        "Genre": "Action, Comedy",
+        "Director": "Director Name",
+        "Actors": "Actor1, Actor2",
+        "imdbRating": "7.8",
+        "Plot": "Short plot description"
+      }
+    ],
+    "Response": "True"
+  }
+  

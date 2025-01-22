@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUX</title>
+    <!-- CSS Link -->
+    <link rel="stylesheet" href="../frontend/styles_dashboard.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="/dashboard" class="flux-btn">FLUX</a>
+        <div class="profile-container">
+            <button class="profile-btn">Profile</button>
+            <div class="dropdown-menu">
+                <a href="/profile" class="dropdown-item">Edit Profile</a>
+                <a href="/favorites" class="dropdown-item">Favorites</a>
+                <a href="/watched" class="dropdown-item">Watched</a>
+                <a href="/watchlist" class="dropdown-item">Watchlist</a>
+                <a href="/rating" class="dropdown-item">My Ratings</a>
+            </div>
+        </div>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </div>
+    
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <h2 style="text-align: center;">Flux Movie Database</h2>
+        <!-- Search Form -->
+        <div class="button-container">
+            <form method="POST" action="/movies" class="mb-4">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        name="movie_name" 
+                        class="form-control" 
+                        placeholder="Search for a movie..." 
+                        required>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Movie Recommendations -->
+        <div class="recommendations-container">
+            <h3>You Might Also Like</h3>
+            <!-- Movie Cards Container -->
+            <div class="movie-container">
+                {% for movie in recommended_movies %}
+                    <div class="movie-card" data-title="{{ movie.title }}">
+                        <img src="{{ movie.poster }}" alt="Movie Poster">
+                        <h3>{{ movie.title }}</h3>
+                        <p>{{ movie.year }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div id="movie-popup" class="movie-popup" style="display: none;">
+        <div class="popup-content">
+            <span id="close-popup" class="close-popup">&times;</span>
+            <img id="popup-poster" src="" alt="Movie Poster">
+            <h3 id="popup-title"></h3>
+            <p id="popup-plot"><strong>Plot:</strong> </p>
+            <p id="popup-year"><strong>Year:</strong> </p>
+            <p id="popup-genre"><strong>Genre:</strong> </p>
+            <p id="popup-director"><strong>Director:</strong> </p>
+            <p id="popup-actors"><strong>Actors:</strong> </p>
+            <p id="popup-imdb"><strong>IMDb Rating:</strong> </p>
+            <button id="add-to-favorites" class="btn btn-primary">Add to Favorites</button>
+            <button id="add-to-watched" class="btn btn-primary">Add to Watched</button>
+            <button id="add-to-watchlist" class="btn btn-primary">Add to Watchlist</button>
+        </div>
+    </div>
+
+    <script>
+        const movieCards = document.querySelectorAll('.movie-card');
+        const moviePopup = document.getElementById('movie-popup');
+        const closePopup = document.getElementById('close-popup');
+        const popupPoster = document.getElementById('popup-poster');
+        const popupTitle = document.getElementById('popup-title');
+        const popupPlot = document.getElementById('popup-plot');
+        const popupYear = document.getElementById('popup-year');
+        const popupGenre = document.getElementById('popup-genre');
+        const popupDirector = document.getElementById('popup-director');
+        const popupActors = document.getElementById('popup-actors');
+        const popupImdb = document.getElementById('popup-imdb');
+        const addToFavorites = document.getElementById('add-to-favorites');
+        const addToWatched = document.getElementById('add-to-watched');
+        const addToWatchlist = document.getElementById('add-to-watchlist');
+
+        let currentMovieData = {};
+
+        movieCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const title = card.getAttribute('data-title');
+                fetch(`/movie_details?title=${title}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        currentMovieData = data;
+                        popupTitle.textContent = data.Title;
+                        popupPoster.src = data.Poster;
+                        popupPlot.innerHTML = `<strong>Plot:</strong> ${data.Plot}`;
+                        popupYear.innerHTML = `<strong>Year:</strong> ${data.Year}`;
+                        popupGenre.innerHTML = `<strong>Genre:</strong> ${data.Genre}`;
+                        popupDirector.innerHTML = `<strong>Director:</strong> ${data.Director}`;
+                        popupActors.innerHTML = `<strong>Actors:</strong> ${data.Actors}`;
+                        popupImdb.innerHTML = `<strong>IMDb Rating:</strong> ${data.imdbRating}`;
+
+                        moviePopup.style.display = 'block';
+                    });
+            });
+        });
+
+        closePopup.addEventListener('click', () => {
+            moviePopup.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === moviePopup) {
+                moviePopup.style.display = 'none';
+            }
+        });
+
+        addToFavorites.addEventListener('click', () => {
+            fetch('/add_to_favorites', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ movie_data: JSON.stringify(currentMovieData) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                alert('An error occurred while adding to favorites.');
+                console.error('Error:', error);
+            });
+        });
+
+        addToWatched.addEventListener('click', () => {
+            fetch('/add_to_watched', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ movie_data: JSON.stringify(currentMovieData) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                alert('An error occurred while adding to watched.');
+                console.error('Error:', error);
+            });
+        });
+
+        addToWatchlist.addEventListener('click', () => {
+            fetch('/add_to_watchlist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ movie_data: JSON.stringify(currentMovieData) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                alert('An error occurred while adding to watchlist.');
+                console.error('Error:', error);
+            });
+        });
+        addToWatchlist.addEventListener('click', () => {
+            fetch('/add_to_rating', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ movie_data: JSON.stringify(currentMovieData) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                alert('An error occurred while adding to rating list.');
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

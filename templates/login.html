@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags and title -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../frontend/styles_login.css">
+</head>
+<body>
+
+<!-- Ring animation sections -->
+<div class="ring">
+  <i style="--clr:#00ff0a;"></i>
+  <i style="--clr:#ff0057;"></i>
+  <i style="--clr:#fffd44;"></i>
+  
+  <div class="login">
+    <h2>Login</h2>
+    <form action="/login" method="POST">
+      <!-- Input fields for login -->
+      <div class="inputBx">
+        <input type="text" name="username" required placeholder="Username">
+      </div>
+      <div class="inputBx">
+        <input type="password" name="password" required placeholder="Password">
+      </div>
+      <div class="inputBx">
+        <input type="submit" value="Login">
+      </div>
+    </form>
+    
+    <!-- Don't have an account? Register section -->
+    <p>Don't have an account? <a href="/register">Register</a></p>
+  </div>
+</div>
+
+<!-- Error popup for login failure -->
+<div id="error-popup" class="error-popup" style="display: none;">
+    <p>Login failed! Incorrect username or password.</p>
+    <button id="close-popup" class="btn-close">Close</button>
+</div>
+
+<!-- JavaScript for handling error popup -->
+<script>
+    // Get the error popup element
+    const errorPopup = document.getElementById("error-popup");
+    // Get the close button element
+    const closePopup = document.getElementById("close-popup");
+
+    // Add event listener to close button to hide the error popup
+    closePopup.addEventListener("click", function() {
+        errorPopup.style.display = "none";
+    });
+
+    // If there is an error message, display the error popup
+    {% if error_message %}
+    errorPopup.style.display = "block";
+    {% endif %}
+</script>
+
+</body>
+</html>
